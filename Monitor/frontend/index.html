@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extract Monitor</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <div class="page">
+
+        <!-- Header -->
+        <header class="topbar">
+            <div>
+                <h1>Extract Monitor</h1>
+                <p class="subtle" id="updatedAt">Loading…</p>
+            </div>
+            <button type="button" class="btn" id="refreshBtn">Refresh</button>
+        </header>
+
+        <!-- Day picker: last N days, newest first -->
+        <nav class="day-picker" id="dayPicker" aria-label="Choose a day"></nav>
+
+        <div class="banner" id="errorBanner" hidden></div>
+
+        <!-- Summary tiles for the selected day -->
+        <section class="tiles" id="tiles" aria-label="Summary"></section>
+
+        <!-- Filters -->
+        <div class="filters">
+            <input type="search" id="searchInput" placeholder="Filter jobs…" aria-label="Filter jobs by name">
+            <label class="toggle">
+                <input type="checkbox" id="problemsOnly">
+                <span>Problems only</span>
+            </label>
+            <div class="legend" id="legend" aria-label="Status legend"></div>
+        </div>
+
+        <!-- Job table -->
+        <div class="table-wrap">
+            <table class="jobs">
+                <thead>
+                    <tr>
+                        <th>Job</th>
+                        <th>Status</th>
+                        <th class="col-history">Last <span id="historyDays">7</span> days</th>
+                        <th>Started</th>
+                        <th class="col-optional">Duration</th>
+                        <th class="num">Records</th>
+                        <th class="col-optional">Output file</th>
+                    </tr>
+                </thead>
+                <tbody id="jobRows"></tbody>
+            </table>
+            <p class="empty" id="emptyState" hidden>No jobs match.</p>
+        </div>
+
+    </div>
+
+    <!-- Job detail drawer -->
+    <div class="scrim" id="scrim" hidden></div>
+    <aside class="drawer" id="drawer" aria-labelledby="drawerTitle" hidden>
+        <div class="drawer-head">
+            <div>
+                <h2 id="drawerTitle"></h2>
+                <p class="subtle" id="drawerSubtitle"></p>
+            </div>
+            <button type="button" class="btn icon-btn" id="drawerClose" aria-label="Close details">✕</button>
+        </div>
+        <div class="drawer-body" id="drawerBody"></div>
+    </aside>
+
+    <script src="js/script.js"></script>
+
+</body>
+
+</html>

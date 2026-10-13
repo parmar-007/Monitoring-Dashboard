@@ -1,0 +1,94 @@
+# Extract Monitor dashboard on OpenShift.
+#
+# Before applying:
+#   1. Replace <your-registry>/extract-monitor:latest with your built image.
+#   2. Replace extract-output-pvc with the PVC your cron jobs write to.
+#   3. Set STATUS_TZ to the same value you give the cron jobs.
+#   4. Create the job registry ConfigMap from jobs.yaml:
+#        oc create configmap extract-monitor-jobs --from-file=jobs.yaml
+#      (to update later: add --dry-run=client -o yaml | oc apply -f -)
+#
+#   oc apply -f openshift/dashboard.yaml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: extract-monitor
+  labels:
+    app: extract-monitor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: extract-monitor
+  template:
+    metadata:
+      labels:
+        app: extract-monitor
+    spec:
+      containers:
+        - name: dashboard
+          image: <your-registry>/extract-monitor:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: STATUS_DIR
+              value: /data/status
+            - name: JOBS_FILE
+              value: /config/jobs.yaml
+            - name: STATUS_TZ
+              value: America/New_York
+          volumeMounts:
+            - name: job-output
+              mountPath: /data
+              readOnly: true # the dashboard never writes to the PVC
+            - name: jobs-registry
+              mountPath: /config # no subPath, so ConfigMap edits reach the pod
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 8080
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 8080
+            periodSeconds: 30
+          resources:
+            requests:
+              cpu: 50m
+              memory: 96Mi
+            limits:
+              memory: 256Mi
+      volumes:
+        - name: job-output
+          persistentVolumeClaim:
+            claimName: extract-output-pvc
+            readOnly: true
+        - name: jobs-registry
+          configMap:
+            name: extract-monitor-jobs
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: extract-monitor
+spec:
+  selector:
+    app: extract-monitor
+  ports:
+    - port: 8080
+      targetPort: 8080
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: extract-monitor
+spec:
+  to:
+    kind: Service
+    name: extract-monitor
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect

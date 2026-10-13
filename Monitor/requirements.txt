@@ -1,3 +1,4 @@
-fastapi
-uvicorn
-python-multipart
+fastapi>=0.110
+uvicorn>=0.29
+pyyaml>=6.0
+tzdata  # timezone database for slim/UBI images

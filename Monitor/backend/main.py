@@ -1,97 +1,36 @@
-from fastapi import FastAPI
+from dataclasses import replace
+from datetime import date, datetime
 
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, HTTPException, Query
+from fastapi.staticfiles import StaticFiles
 
-from services.file_reader import get_applications_by_date
+from backend import store
+from backend.config import APP_ROOT, load_settings
 
+settings = load_settings()
 
-app = FastAPI()
-
-
-# Allow Frontend Access
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"]
-)
+app = FastAPI(title="Extract Monitor")
 
 
-@app.get("/")
-def health_check():
-
-    return {
-        "status": "UP"
-    }
+@app.get("/api/health")
+def health():
+    return {"status": "UP", "status_dir_readable": settings.status_dir.is_dir()}
 
 
-@app.get("/applications/{selected_date}")
-def get_dashboard_data(selected_date):
+@app.get("/api/overview")
+def get_overview(days: int = Query(settings.days, ge=1, le=31)):
+    return store.overview(replace(settings, days=days), datetime.now(settings.tz))
 
-    return get_applications_by_date(selected_date)
 
-@app.get("/summary/{selected_date}")
-def get_summary(selected_date):
+@app.get("/api/jobs/{name}/{run_date}")
+def get_job_detail(name: str, run_date: date):
+    if not store.JOB_NAME_RE.match(name):
+        raise HTTPException(400, "Invalid job name")
+    detail = store.job_detail(settings, name, run_date, datetime.now(settings.tz))
+    if detail is None:
+        raise HTTPException(404, f"Unknown job {name}")
+    return detail
 
-    applications = get_applications_by_date(
-        selected_date
-    )
 
-    summary = {
-        "total": len(applications),
-
-        "success": len(
-            [
-                a
-                for a in applications
-                if a["status"] == "SUCCESS"
-            ]
-        ),
-
-        "failed": len(
-            [
-                a
-                for a in applications
-                if a["status"] == "FAILED"
-            ]
-        ),
-
-        "running": len(
-            [
-                a
-                for a in applications
-                if a["status"] == "RUNNING"
-            ]
-        )
-    }
-
-    return summary
-
-@app.get(
-    "/application/{app_name}/{selected_date}"
-)
-def get_application_details(
-    app_name,
-    selected_date
-):
-
-    from pathlib import Path
-    import json
-
-    file_path = (
-        Path("../logs")
-        / app_name
-        / f"{selected_date}.json"
-    )
-
-    if not file_path.exists():
-
-        return {
-            "message": "File not found"
-        }
-
-    with open(file_path, "r") as file:
-
-        return json.load(file)
+# The dashboard itself; mounted last so /api routes take precedence.
+app.mount("/", StaticFiles(directory=APP_ROOT / "frontend", html=True), name="frontend")

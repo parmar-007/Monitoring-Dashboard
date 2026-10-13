@@ -1,0 +1,31 @@
+# What changes in each existing CronJob - only the env vars and the PVC mount
+# (most jobs already mount the PVC to write their extract file).
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: execution-extract
+spec:
+  schedule: "30 5 * * *"
+  timeZone: America/New_York
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: extract
+              image: <your-registry>/execution-extract:latest
+              env:
+                - name: STATUS_DIR
+                  value: /data/status
+                - name: STATUS_TZ # must match the dashboard's STATUS_TZ
+                  value: America/New_York
+              volumeMounts:
+                - name: job-output
+                  mountPath: /data
+          volumes:
+            - name: job-output
+              persistentVolumeClaim:
+                claimName: extract-output-pvc

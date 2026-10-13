@@ -1,0 +1,53 @@
+# Registry of the cron jobs the dashboard expects.
+#
+# This is what lets the dashboard report a job that did NOT run (no file on the
+# PVC) as MISSING instead of silently leaving it out. In OpenShift, ship this
+# file as a ConfigMap (see openshift/dashboard.yaml); edits are picked up on
+# the next page refresh, no restart needed.
+#
+#   name                 folder name under STATUS_DIR (= the job name passed to track_run)
+#   schedule             daily | weekdays | none | list of days, e.g. "mon,wed,fri"
+#   expected_by          HH:MM - the job counts as MISSING if there's no run by then
+#   max_runtime_minutes  a run still RUNNING after this long is flagged STUCK
+#
+# Folders on the PVC that are not listed here still show up, marked "unregistered".
+
+defaults:
+  schedule: daily
+  expected_by: "08:00"
+  max_runtime_minutes: 60
+
+jobs:
+  - name: Execution_Extract
+    description: Trade executions to the data warehouse
+    expected_by: "06:30"
+
+  - name: Portfolio_Extract
+    description: End-of-day portfolio positions
+    expected_by: "06:30"
+
+  - name: TimeBox_Extract
+    description: Timebox allocations
+    schedule: weekdays
+
+  - name: Risk_Exposure_Extract
+    description: Daily risk exposure by desk
+    schedule: weekdays
+    max_runtime_minutes: 90
+
+  - name: Pricing_Snapshot
+    description: Closing prices snapshot
+    expected_by: "05:00"
+    max_runtime_minutes: 30
+
+  - name: Counterparty_Extract
+    description: Counterparty master data
+    schedule: mon,wed,fri
+
+  - name: GL_Reconciliation
+    description: General ledger reconciliation file
+    schedule: weekdays
+    expected_by: "23:00"
+
+  - name: Customer_Accounts_Extract
+    description: Customer account balances
