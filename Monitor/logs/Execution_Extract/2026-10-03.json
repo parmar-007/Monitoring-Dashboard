@@ -1,0 +1,12 @@
+{
+    "application": "Execution_Extract",
+    "execution_id": "EXE-20261003-001",
+    "execution_date": "2026-10-03",
+    "start_time": "09:00:00",
+    "end_time": "09:05:00",
+    "duration_seconds": 252,
+    "status": "SUCCESS",
+    "total_records": 43011,
+    "error_code": "",
+    "error_message": ""
+}

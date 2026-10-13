@@ -1,0 +1,208 @@
+/* Reset */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body */
+
+body {
+    background: #f4f6f9;
+    font-family: Arial, sans-serif;
+    padding: 20px;
+}
+
+/* Dashboard Container */
+
+.dashboard-container {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+/* Header */
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.dashboard-header input {
+    padding: 8px;
+}
+
+/* Cards Section */
+
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.card {
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid;
+}
+
+.card h3 {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.card p {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+/* Card Colors */
+
+.total-card {
+    background: #eef2ff;
+    border-color: #c7d2fe;
+}
+
+.success-card {
+    background: #f0fdf4;
+    border-color: #86efac;
+}
+
+.failed-card {
+    background: #fef2f2;
+    border-color: #fca5a5;
+}
+
+.running-card {
+    background: #fffbeb;
+    border-color: #fcd34d;
+}
+
+/* Main Section */
+
+.main-content {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+/* Table Section */
+
+.table-container {
+    flex: 2;
+}
+
+.table-container h2 {
+    margin-bottom: 15px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+thead {
+    background: #e5e7eb;
+}
+
+th,
+td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+tbody tr:hover {
+    background: #f9fafb;
+}
+
+/* Status */
+
+.status {
+    padding: 5px 12px;
+    border-radius: 15px;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.success {
+    background: green;
+}
+
+.failed {
+    background: red;
+}
+
+.running {
+    background: orange;
+}
+
+/* Buttons */
+
+button {
+    background: royalblue;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+/* Details Panel */
+
+.details-panel {
+    flex: 1;
+    background: #fafafa;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.details-panel h2 {
+    margin-bottom: 20px;
+}
+
+.details-panel h3 {
+    margin-bottom: 20px;
+}
+
+.details-panel p {
+    margin-bottom: 12px;
+}
+
+.full-log-btn {
+    margin-top: 15px;
+}
+
+/* Responsive */
+
+@media(max-width:1000px){
+
+    .main-content{
+        flex-direction:column;
+    }
+
+    .summary-cards{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+
+@media(max-width:600px){
+
+    .summary-cards{
+        grid-template-columns:1fr;
+    }
+
+}

@@ -1,0 +1,12 @@
+{
+    "application": "TimeBox_Extract",
+    "execution_id": "TIM-20261005-001",
+    "execution_date": "2026-10-05",
+    "start_time": "09:00:00",
+    "end_time": "09:05:00",
+    "duration_seconds": 235,
+    "status": "SUCCESS",
+    "total_records": 9800,
+    "error_code": "",
+    "error_message": ""
+}

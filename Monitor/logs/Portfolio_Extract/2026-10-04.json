@@ -1,0 +1,12 @@
+{
+    "application": "Portfolio_Extract",
+    "execution_id": "POR-20261004-001",
+    "execution_date": "2026-10-04",
+    "start_time": "09:00:00",
+    "end_time": "-",
+    "duration_seconds": 435,
+    "status": "RUNNING",
+    "total_records": 8120,
+    "error_code": "",
+    "error_message": ""
+}
